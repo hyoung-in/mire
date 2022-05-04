@@ -1,17 +1,25 @@
-require('dotenv').config();
-const express = require('express');
-const http = require('http');
-const path = require('path');
+// Vue SSR
+const { createBundleRenderer } = require('vue-server-renderer');
+const template = fs.readFileSync(path.join(__dirname, 'index.template.html'), 'utf-8');
+const serverBundle = require(path.join(__dirname, '../dist/vue-ssr-server-bundle.json'));
+const clientManifest = require(path.join(__dirname, '../dist/vue-ssr-client-manifest.json'));
 
-// 앱 초기화
-const app = express();
-const port = process.env.SERVER_PORT || 3000;
-const webServer = http.createServer(app);
+const renderer = createBundleRenderer(serverBundle, {
+	runInNewContext : false,
+	template,
+	clientManifest,
+});
 
-// 정적 폴더
-app.use(express.static(path.join(__dirname, "../dist")));
+app.get('*', (req, res) => {
+	const ctx = {
+		url : req.url,
+		title : 'Vue SSR App',
+		metas : `<!-- inject more metas -->`,
+	};
 
-// 서버 리슨
-webServer.listen(port, () => {
-	console.log(`http://localhost:${port}`)
+	const stream = renderer.renderToStream(ctx);
+
+	stream.on('end', ()=> {
+		console.log('스트림 렌더 종료');
+	}).pipe(res);
 });

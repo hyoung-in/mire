@@ -15,3 +15,17 @@ export default new Vuex.Store({
   modules: {
   }
 })
+
+export function createStore() {
+	const store = new Vuex.Store({
+		state: {
+		},
+		mutations: {
+		},
+		actions: {
+		},
+		modules: {
+		}
+	});
+	return store;
+}
