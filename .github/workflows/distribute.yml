@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - name: Deploy
-        uses: hyoung-in/hummans@nate.com
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.REMOTE_IP }}
           username: ${{ secrets.REMOTE_SSH_ID }}
